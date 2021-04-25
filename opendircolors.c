@@ -26,22 +26,20 @@
  * SUCH DAMAGE.
  */
 
+#include <getopt.h>
 #include <stdio.h>
-#include <sysexits.h>
 #include <stdlib.h>
 #include <string.h>
-#include <getopt.h>
+#include <sysexits.h>
 
-void	usage(void);
+void usage(void);
 
-static const struct option long_options[] =
-{
-	{"help",		no_argument,		NULL, 'h'},
-	{"bourne-shell",		no_argument,		NULL, 'b'},
-	{"sh",		no_argument,		NULL, 'b'},
-	{"print-database",		no_argument,		NULL, 'p'},
-	{NULL,		no_argument,		NULL, 0}
-};
+static const struct option long_options[] = { { "help", no_argument, NULL,
+						  'h' },
+	{ "bourne-shell", no_argument, NULL, 'b' },
+	{ "sh", no_argument, NULL, 'b' },
+	{ "print-database", no_argument, NULL, 'p' },
+	{ NULL, no_argument, NULL, 0 } };
 
 int
 main(int argc, char **argv)

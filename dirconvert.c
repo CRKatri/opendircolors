@@ -37,10 +37,10 @@ const char *types[11] = { "di", "ln", "so", "pi", "ex", "bd", "cd", "su", "sg",
 	"tw", "ow" };
 const char col[8] = "abcdefgh";
 
-void	usage(void);
-int	tolscolors(char *);
-int	tols_colors(char *);
-char	numtocol(char, bool);
+void usage(void);
+int tolscolors(char *);
+int tols_colors(char *);
+char numtocol(char, bool);
 
 int
 main(int argc, char **argv)
