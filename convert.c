@@ -60,7 +60,7 @@ main(int argc, char **argv)
 int
 tolscolors(char *dircolor)
 {
-	char *color, *ent, *buf, *val, *val2;
+	char *ent, *buf, *val, *val2;
 	char out[22] = "xxxxxxxxxxxxxxxxxxxxxx";
 	bool bold = false;
 
@@ -103,8 +103,7 @@ numtocol(char c, bool bold)
 int
 tols_colors(char *lscolors)
 {
-	char *ls_out;
-	strcpy(ls_out, "");
+	char *ls_out = strdup("");
 
 	for (int i = 0; i < 11; i++) {
 		if (lscolors[2 * i] == 'x' && lscolors[2 * i + 1] == 'x')
@@ -123,6 +122,7 @@ tols_colors(char *lscolors)
 		sprintf(ls_out + strlen(ls_out), ":");
 	}
 	printf("%s\n", ls_out);
+	free(ls_out);
 	return 0;
 }
 

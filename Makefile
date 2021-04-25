@@ -1,6 +1,9 @@
 PROG=	opendircolors
-SRCS=	lscolors.c
+SRCS=	convert.c
 MAN=	
+
+BINDIR=/usr/local/bin
+LINKS=	${BINDIR}/opendircolors ${BINDIR}/dircolors
 
 MAKEOBJDIR=obj
 
