@@ -99,6 +99,6 @@ tols_colors(char *lscolors)
 void
 usage(void)
 {
-	(void)fprintf(stderr, "%s\n", "usage: lscolors format_code ");
+	(void)fprintf(stderr, "%s\n", "usage: lscolors LSCOLORS|LS_COLORS ");
 	exit(EX_USAGE);
 }
