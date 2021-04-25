@@ -37,10 +37,10 @@ const char *types[11] = { "di", "ln", "so", "pi", "ex", "bd", "cd", "su", "sg",
 	"tw", "ow" };
 const char col[8] = "abcdefgh";
 
-int tolscolors(char *);
-int tols_colors(char *);
-void usage(void);
-char numtocol(char, bool);
+void	usage(void);
+int	tolscolors(char *);
+int	tols_colors(char *);
+char	numtocol(char, bool);
 
 int
 main(int argc, char **argv)
@@ -129,6 +129,6 @@ tols_colors(char *lscolors)
 void
 usage(void)
 {
-	(void)fprintf(stderr, "%s\n", "usage: lscolors LSCOLORS|LS_COLORS ");
+	(void)fprintf(stderr, "usage: %s LSCOLORS|LS_COLORS\n", getprogname());
 	exit(EX_USAGE);
 }

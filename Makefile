@@ -1,10 +1,14 @@
-PROG=	opendircolors
-SRCS=	convert.c
+PROGS=	opendircolors dirconvert
+SRCS.opendircolors=	opendircolors.c
+SRCS.dirconvert=	dirconvert.c
+#TODO: Write manpage
 MAN=	
 
 BINDIR=/usr/local/bin
-LINKS=	${BINDIR}/opendircolors ${BINDIR}/dircolors
+SYMLINKS=opendircolors ${BINDIR}/dircolors
+#TODO: Write manpage
+#MLINKS= opendircolors.1 dircolors.1
 
 MAKEOBJDIR=obj
 
-.include <bsd.prog.mk>
+.include <bsd.progs.mk>
