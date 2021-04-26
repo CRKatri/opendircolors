@@ -31,60 +31,48 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <sysexits.h>
 
 #include "common.h"
 
-void usage(void);
-char *tols_colors(char *);
-
-int
-main(int argc, char **argv)
+char
+numtocol(char c, bool bold)
 {
-	if (argc != 2)
-		usage();
-
-	if (strchr(argv[1], '=')) {
-		printf("%s\n", tolscolors(argv[1]));
-		return (0);
-	} else {
-		printf("%s\n", tols_colors(argv[1]));
-		return (0);
-	}
-
-	/* NOTREACHED */
-	return (0);
+	char buf = col[strtol(&c, NULL, 10)];
+	if (bold)
+		return (toupper(buf));
+	else
+		return (buf);
 }
 
 char *
-tols_colors(char *lscolors)
+tolscolors(char *dircolor)
 {
-	char *ls_out = strdup("");
+	char *ent, *buf, *val, *val2;
+	char out[22] = "xxxxxxxxxxxxxxxxxxxxxx";
+	bool bold = false;
 
-	for (int i = 0; i < 11; i++) {
-		if (lscolors[2 * i] == 'x' && lscolors[2 * i + 1] == 'x')
-			continue;
-		sprintf(ls_out + strlen(ls_out), "%s=", types[i]);
-		if (isupper(lscolors[2 * i]))
-			sprintf(ls_out + strlen(ls_out), "01;");
-		if (tolower(lscolors[2 * i]) == 'x')
-			sprintf(ls_out + strlen(ls_out), "00");
-		else if (tolower(lscolors[2 * i] != 'x'))
-			sprintf(ls_out + strlen(ls_out), "3%i",
-			    (int)(strchr(col, tolower(lscolors[2 * i])) - col));
-		if (tolower(lscolors[2 * i + 1]) != 'x')
-			sprintf(ls_out + strlen(ls_out), ";4%i",
-			    (int)(strchr(col, tolower(lscolors[2 * i])) - col));
-		sprintf(ls_out + strlen(ls_out), ":");
+	while ((ent = buf = strsep(&dircolor, ":")) != NULL) {
+		for (int i = 0; i < 11; i++) {
+			if (strncmp(ent, types[i], strlen(types[i])) == 0) {
+				bold = false;
+				while ((val = strsep(&buf, "=")) != NULL) {
+					while ((val2 = strsep(&val, ";")) !=
+					    NULL) {
+						if (strcmp(val2, "01") == 0) {
+							bold = true;
+						} else if (val2[0] == '3') {
+							out[2 * i] = numtocol(
+							    val2[1], bold);
+						} else if (val2[0] == '4') {
+							out[2 * i + 1] =
+							    numtocol(
+								val2[1], NULL);
+						}
+					}
+				}
+			}
+		}
 	}
-	char *ret = strdup(ls_out);
-	free(ls_out);
+	char *ret = strdup(out);
 	return (ret);
-}
-
-void
-usage(void)
-{
-	(void)fprintf(stderr, "usage: %s LSCOLORS|LS_COLORS\n", getprogname());
-	exit(EX_USAGE);
 }

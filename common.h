@@ -26,65 +26,14 @@
  * SUCH DAMAGE.
  */
 
-#include <ctype.h>
+#ifndef COMMON_H
+#define COMMON_H
 #include <stdbool.h>
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <sysexits.h>
 
-#include "common.h"
+static const char *types[11] = { "di", "ln", "so", "pi", "ex", "bd", "cd", "su",
+	"sg", "tw", "ow" };
+static const char col[8] = "abcdefgh";
+char *tolscolors(char *);
+char numtocol(char, bool);
 
-void usage(void);
-char *tols_colors(char *);
-
-int
-main(int argc, char **argv)
-{
-	if (argc != 2)
-		usage();
-
-	if (strchr(argv[1], '=')) {
-		printf("%s\n", tolscolors(argv[1]));
-		return (0);
-	} else {
-		printf("%s\n", tols_colors(argv[1]));
-		return (0);
-	}
-
-	/* NOTREACHED */
-	return (0);
-}
-
-char *
-tols_colors(char *lscolors)
-{
-	char *ls_out = strdup("");
-
-	for (int i = 0; i < 11; i++) {
-		if (lscolors[2 * i] == 'x' && lscolors[2 * i + 1] == 'x')
-			continue;
-		sprintf(ls_out + strlen(ls_out), "%s=", types[i]);
-		if (isupper(lscolors[2 * i]))
-			sprintf(ls_out + strlen(ls_out), "01;");
-		if (tolower(lscolors[2 * i]) == 'x')
-			sprintf(ls_out + strlen(ls_out), "00");
-		else if (tolower(lscolors[2 * i] != 'x'))
-			sprintf(ls_out + strlen(ls_out), "3%i",
-			    (int)(strchr(col, tolower(lscolors[2 * i])) - col));
-		if (tolower(lscolors[2 * i + 1]) != 'x')
-			sprintf(ls_out + strlen(ls_out), ";4%i",
-			    (int)(strchr(col, tolower(lscolors[2 * i])) - col));
-		sprintf(ls_out + strlen(ls_out), ":");
-	}
-	char *ret = strdup(ls_out);
-	free(ls_out);
-	return (ret);
-}
-
-void
-usage(void)
-{
-	(void)fprintf(stderr, "usage: %s LSCOLORS|LS_COLORS\n", getprogname());
-	exit(EX_USAGE);
-}
+#endif

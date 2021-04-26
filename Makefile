@@ -1,6 +1,6 @@
 PROGS=	opendircolors dirconvert
-SRCS.opendircolors=	opendircolors.c
-SRCS.dirconvert=	dirconvert.c
+SRCS.opendircolors=	opendircolors.c common.c
+SRCS.dirconvert=	dirconvert.c common.c
 #TODO: Write manpage
 MAN=	
 
