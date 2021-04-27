@@ -26,18 +26,18 @@
  * SUCH DAMAGE.
  */
 
+#include <err.h>
+#include <errno.h>
 #include <getopt.h>
+#include <libgen.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <sysexits.h>
-#include <errno.h>
-#include <libgen.h>
-#include <err.h>
 
 #include "common.h"
 
-void usage(const char*);
+void usage(const char *);
 
 #define MAXKEYLEN 21
 
@@ -103,7 +103,7 @@ main(int argc, char **argv)
 		fd = stdin;
 	else if ((fd = fopen(path, "r")) == NULL) {
 		warnx("%s: %s\n", path, strerror(errno));
-		return(errno);
+		return (errno);
 	}
 
 	char *line = NULL;
