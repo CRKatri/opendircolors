@@ -32,27 +32,37 @@
 #include <stdlib.h>
 #include <string.h>
 #include <sysexits.h>
+#include <libgen.h>
 
 #include "common.h"
 
-void usage(void);
+void usage(const char *);
 char *tols_colors(char *);
 
 int
 main(int argc, char **argv)
 {
 	if (argc != 2)
-		usage();
+		usage(argv[0]);
 
-	if (strchr(argv[1], '=')) {
-		printf("%s\n", tolscolors(argv[1]));
-		return (0);
-	} else {
-		printf("%s\n", tols_colors(argv[1]));
-		return (0);
-	}
+	char *input = NULL;
+	if (strcmp(argv[1], "-") == 0) {
+		char *buf = NULL;
+		size_t linecap = 0;
+		ssize_t linelen;
+		getline(&buf, &linecap, stdin);
+		if (buf[sizeof(buf) - 1] == '\n')
+			buf[sizeof(buf) - 1] = '\0';
+		input = strdup(buf);
+		free(buf);
+	} else
+		input = argv[1];
 
-	/* NOTREACHED */
+	if (strchr(input, '='))
+		fprintf(stdout, "%s\n", tolscolors(input));
+	else
+		fprintf(stdout, "%s\n", tols_colors(input));
+
 	return (0);
 }
 
@@ -83,8 +93,11 @@ tols_colors(char *lscolors)
 }
 
 void
-usage(void)
+usage(const char *progname)
 {
-	(void)fprintf(stderr, "usage: %s LSCOLORS|LS_COLORS\n", getprogname());
+	char *path;
+	path = strdup(progname);
+
+	(void)fprintf(stderr, "usage: %s LSCOLORS|LS_COLORS\n", basename(path));
 	exit(EX_USAGE);
 }

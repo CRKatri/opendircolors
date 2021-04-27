@@ -31,10 +31,13 @@
 #include <stdlib.h>
 #include <string.h>
 #include <sysexits.h>
+#include <errno.h>
+#include <libgen.h>
+#include <err.h>
 
 #include "common.h"
 
-void usage(void);
+void usage(const char*);
 
 #define MAXKEYLEN 21
 
@@ -62,6 +65,7 @@ int
 main(int argc, char **argv)
 {
 	int ch;
+	FILE *fd;
 	char *prefix = "LS_COLORS='";
 	char *suffix = "';\nexport LS_COLORS";
 	char *lsprefix = "LSCOLORS='";
@@ -85,14 +89,22 @@ main(int argc, char **argv)
 		case 'h':
 		case '?':
 		default:
-			usage();
+			usage(argv[0]);
 		}
 	}
 	argc -= optind;
 	argv += optind;
 
-	char *path = *argv != NULL ? *argv++ : "-";
-	FILE *fd = fopen(path, "r");
+	if (argc != 1)
+		usage(argv[1]);
+
+	char *path = *argv;
+	if (strcmp(path, "-") == 0)
+		fd = stdin;
+	else if ((fd = fopen(path, "r")) == NULL) {
+		warnx("%s: %s\n", path, strerror(errno));
+		return(errno);
+	}
 
 	char *line = NULL;
 	size_t linecap = 0;
@@ -119,18 +131,23 @@ main(int argc, char **argv)
 			}
 		}
 	}
+	fclose(fd);
+
+	fprintf(stdout, "%s%s%s\n", prefix, out, suffix);
+	fprintf(stdout, "%s%s%s\n", lsprefix, tolscolors(out), lssuffix);
+
 	free(line);
-	printf("%s%s%s\n", prefix, out, suffix);
-	printf("%s%s%s\n", lsprefix, tolscolors(out), lssuffix);
 	free(out);
 
-	/* NOTREACHED */
 	return (0);
 }
 
 void
-usage(void)
+usage(const char *progname)
 {
-	(void)fprintf(stderr, "usage: %s [-bch] [FILE]\n", getprogname());
+	char *path;
+	path = strdup(progname);
+
+	(void)fprintf(stderr, "usage: %s [-bch] [FILE]\n", basename(path));
 	exit(EX_USAGE);
 }
