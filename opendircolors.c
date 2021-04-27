@@ -46,6 +46,7 @@ static const struct option long_options[] = {	    /* no clang-format */
 	{ "bourne-shell", no_argument, NULL, 'b' }, /**/
 	{ "sh", no_argument, NULL, 'b' },	    /**/
 	{ "csh", no_argument, NULL, 'c' },	    /**/
+	{ "c-shell", no_argument, NULL, 'c' },	    /**/
 	{ NULL, no_argument, NULL, 0 }
 };
 
@@ -67,18 +68,18 @@ main(int argc, char **argv)
 	int ch;
 	FILE *fd;
 	char *prefix = "LS_COLORS='";
-	char *suffix = "';\nexport LS_COLORS";
+	char *suffix = "';\nexport LS_COLORS;";
 	char *lsprefix = "LSCOLORS='";
-	char *lssuffix = "';\nexport LSCOLORS";
+	char *lssuffix = "';\nexport LSCOLORS;";
 
 	while (
 	    (ch = getopt_long(argc, argv, "hbc", long_options, NULL)) != -1) {
 		switch (ch) {
 		case 'b':
 			prefix = "LS_COLORS='";
-			suffix = "';\nexport LS_COLORS";
+			suffix = "';\nexport LS_COLORS;";
 			lsprefix = "LSCOLORS='";
-			lssuffix = "';\nexport LSCOLORS";
+			lssuffix = "';\nexport LSCOLORS;";
 			break;
 		case 'c':
 			prefix = "setenv LS_COLORS '";
