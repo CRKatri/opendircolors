@@ -48,7 +48,6 @@ main(int argc, char **argv)
 	if (strcmp(argv[1], "-") == 0) {
 		char *buf = NULL;
 		size_t linecap = 0;
-		ssize_t linelen;
 		getline(&buf, &linecap, stdin);
 		if (buf[sizeof(buf) - 1] == '\n')
 			buf[sizeof(buf) - 1] = '\0';
