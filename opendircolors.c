@@ -119,7 +119,6 @@ main(int argc, char **argv)
 		if (*line == '.') {
 			sprintf(out + strlen(out), "*%s=%s:", fmttype, val);
 			continue;
-			;
 		} else if (*line == '*') {
 			sprintf(out + strlen(out), "%s=%s:", fmttype, val);
 			continue;

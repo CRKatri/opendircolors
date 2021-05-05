@@ -96,6 +96,7 @@ usage(const char *progname)
 	char *path;
 	path = strdup(progname);
 
-	(void)fprintf(stderr, "usage: %s LSCOLORS | LS_COLORS\n", basename(path));
+	(void)fprintf(
+	    stderr, "usage: %s LSCOLORS | LS_COLORS\n", basename(path));
 	exit(EX_USAGE);
 }

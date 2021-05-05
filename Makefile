@@ -9,4 +9,7 @@ SYMLINKS+=	opendircolors.1.gz ${MANDIR}1/dircolors.1.gz
 
 MAKEOBJDIR=obj
 
+format:
+	find ${.CURDIR} -type f -name '*.c' -exec clang-format -i {} \;
+
 .include <bsd.progs.mk>
