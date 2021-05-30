@@ -26,10 +26,12 @@
  * SUCH DAMAGE.
  */
 
+#include <ctype.h>
 #include <err.h>
 #include <errno.h>
 #include <getopt.h>
 #include <libgen.h>
+#include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -37,9 +39,7 @@
 
 #include "common.h"
 
-void usage(const char *);
-
-#define MAXKEYLEN 21
+static void usage(const char *);
 
 static const struct option long_options[] = {	    /* no clang-format */
 	{ "help", no_argument, NULL, 'h' },	    /**/
@@ -61,6 +61,11 @@ static const char *short_types[38] = { "no", "no", "fi", "rs", "di", "ln", "ln",
 	"ln", "or", "mi", "pi", "pi", "so", "bd", "bd", "cd", "cd", "do", "ex",
 	"lc", "lc", "rc", "rc", "ec", "ec", "su", "su", "sg", "sg", "st", "ow",
 	"ow", "tw", "tw", "ca", "mh", "cl", NULL };
+
+static const int indexes[37] = { -1, -1, -1, -1, 0, 1, 1,
+	1, -1, -1, 3, 3, 2, 5, 5, 6, 6, -1, 4,
+	-1, -1, -1, -1, -1, -1, 7, 7, 8, 8, -1, 10,
+	10, 9, 9, -1, -1, -1 };
 
 int
 main(int argc, char **argv)
@@ -110,39 +115,46 @@ main(int argc, char **argv)
 	char *line = NULL;
 	size_t linecap = 0;
 	ssize_t linelen;
-	char *out = strdup("");
+	char *ls_out = strdup("");
+	char lsout[22] = "xxxxxxxxxxxxxxxxxxxxxx";
+	struct color color;
+
 	while ((linelen = getline(&line, &linecap, fd)) > 0) {
 		if (*line == '#' || *line == '\n')
 			continue;
 		char fmttype[MAXKEYLEN] = "", val[MAXKEYLEN] = "";
 		sscanf(line, "%s %s\n", fmttype, val);
 		if (*line == '.') {
-			sprintf(out + strlen(out), "*%s=%s:", fmttype, val);
+			sprintf(ls_out + strlen(ls_out), "*%s=%s:", fmttype, val);
 			continue;
 		} else if (*line == '*') {
-			sprintf(out + strlen(out), "%s=%s:", fmttype, val);
+			sprintf(ls_out + strlen(ls_out), "%s=%s:", fmttype, val);
 			continue;
 		}
 		for (int i = 0; i < 37; i++) {
 			if (strcmp(fmttype, long_types[i]) == 0) {
-				sprintf(out + strlen(out),
-				    "%s=%s:", short_types[i], val);
+				sprintf(ls_out + strlen(ls_out), "%s=%s:", short_types[i], val);
+				parseansi(val, &color);
+				if (indexes[i] >= 0) {
+					lsout[2 * indexes[i]] = color.fg;
+					lsout[2 * indexes[i] + 1] = color.bg;
+				}
 				break;
 			}
 		}
 	}
 	fclose(fd);
 
-	fprintf(stdout, "%s%s%s\n", prefix, out, suffix);
-	fprintf(stdout, "%s%s%s\n", lsprefix, tolscolors(out), lssuffix);
+	fprintf(stdout, "%s%s%s\n", prefix, ls_out, suffix);
+	fprintf(stdout, "%s%s%s\n", lsprefix, lsout, lssuffix);
 
 	free(line);
-	free(out);
+	free(ls_out);
 
 	return (0);
 }
 
-void
+static void
 usage(const char *progname)
 {
 	char *path;

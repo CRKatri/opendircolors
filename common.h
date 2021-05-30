@@ -30,10 +30,13 @@
 #define COMMON_H
 #include <stdbool.h>
 
-static const char *types[11] = { "di", "ln", "so", "pi", "ex", "bd", "cd", "su",
-	"sg", "tw", "ow" };
-static const char col[8] = "abcdefgh";
-char *tolscolors(char *);
-char numtocol(char, bool);
+#define MAXKEYLEN 21
+
+struct color {
+	char fg;
+	char bg;
+};
+
+struct color *parseansi(char *, struct color*);
 
 #endif

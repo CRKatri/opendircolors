@@ -30,48 +30,41 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <err.h>
 
 #include "common.h"
 
-char
-numtocol(char c, bool bold)
+struct color *
+parseansi(char *ansi, struct color *color)
 {
-	char buf = col[strtol(&c, NULL, 10)];
-	if (bold)
-		return (toupper(buf));
-	else
-		return (buf);
-}
+	long long num;
+	char *token;
+	const char *errstr;
+	bool bold = false, underline = false;
 
-char *
-tolscolors(char *dircolor)
-{
-	char *ent, *buf, *val, *val2;
-	char out[22] = "xxxxxxxxxxxxxxxxxxxxxx";
-	bool bold = false;
+	color->fg = 'x';
+	color->bg = 'x';
 
-	while ((ent = buf = strsep(&dircolor, ":")) != NULL) {
-		for (int i = 0; i < 11; i++) {
-			if (strncmp(ent, types[i], strlen(types[i])) == 0) {
-				bold = false;
-				while ((val = strsep(&buf, "=")) != NULL) {
-					while ((val2 = strsep(&val, ";")) !=
-					    NULL) {
-						if (strcmp(val2, "01") == 0) {
-							bold = true;
-						} else if (val2[0] == '3') {
-							out[2 * i] = numtocol(
-							    val2[1], bold);
-						} else if (val2[0] == '4') {
-							out[2 * i + 1] =
-							    numtocol(
-								val2[1], NULL);
-						}
-					}
-				}
-			}
+	while ((token = strsep(&ansi, ";")) != NULL) {
+		num = strtonum(token, 0, 47, NULL);
+		switch (num) {
+			case 1:
+				bold = true;
+				break;
+			case 4:
+				underline = true;
+				break;
+			default:
+				if (num <= 37)
+					color->fg = (char)((num - 30) + 97);
+				else if (num <= 47)
+					color->bg = (char)((num - 40) + 97);
 		}
 	}
-	char *ret = strdup(out);
-	return (ret);
+	if (bold)
+		color->fg = toupper(color->fg);
+	if (underline)
+		color->bg = toupper(color->bg);
+
+	return color;
 }

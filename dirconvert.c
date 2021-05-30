@@ -28,6 +28,7 @@
 
 #include <ctype.h>
 #include <libgen.h>
+#include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -35,8 +36,12 @@
 
 #include "common.h"
 
+static const char *types[11] = { "di", "ln", "so", "pi", "ex", "bd", "cd", "su",
+	"sg", "tw", "ow" };
+
 void usage(const char *);
 char *tols_colors(char *);
+char *tolscolors(char *);
 
 int
 main(int argc, char **argv)
@@ -75,18 +80,40 @@ tols_colors(char *lscolors)
 		sprintf(ls_out + strlen(ls_out), "%s=", types[i]);
 		if (isupper(lscolors[2 * i]))
 			sprintf(ls_out + strlen(ls_out), "01;");
+		if (isupper(lscolors[2 * i + 1]))
+			sprintf(ls_out + strlen(ls_out), "04;");
 		if (tolower(lscolors[2 * i]) == 'x')
 			sprintf(ls_out + strlen(ls_out), "00");
 		else if (tolower(lscolors[2 * i] != 'x'))
-			sprintf(ls_out + strlen(ls_out), "3%i",
-			    (int)(strchr(col, tolower(lscolors[2 * i])) - col));
+			sprintf(ls_out + strlen(ls_out), "3%i", (int)tolower(lscolors[2 * i]) - 97);
 		if (tolower(lscolors[2 * i + 1]) != 'x')
-			sprintf(ls_out + strlen(ls_out), ";4%i",
-			    (int)(strchr(col, tolower(lscolors[2 * i])) - col));
+			sprintf(ls_out + strlen(ls_out), ";4%i", (int)tolower(lscolors[2 * i + 1]) - 97);
 		sprintf(ls_out + strlen(ls_out), ":");
 	}
 	char *ret = strdup(ls_out);
 	free(ls_out);
+	return (ret);
+}
+
+char *
+tolscolors(char *dircolor)
+{
+	char *ent;
+	char key[2] = "", val[MAXKEYLEN] = "";
+	char out[22] = "xxxxxxxxxxxxxxxxxxxx";
+	struct color color;
+
+	while ((ent = strsep(&dircolor, ":")) != NULL) {
+		for (int i = 0; i < 11; i++) {
+			if (strncmp(ent, types[i], strlen(types[i])) == 0) {
+				sscanf(ent, "%c%c=%s", &key[0], &key[1], val);
+				parseansi(val, &color);
+				out[2 * i] = color.fg;
+				out[2 * i + 1] = color.bg;
+			}
+		}
+	}
+	char *ret = strdup(out);
 	return (ret);
 }
 
