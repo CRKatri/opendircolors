@@ -41,14 +41,16 @@
 
 static void usage(const char *);
 
-static const struct option long_options[] = {	    /* no clang-format */
-	{ "help", no_argument, NULL, 'h' },	    /**/
-	{ "bourne-shell", no_argument, NULL, 'b' }, /**/
-	{ "sh", no_argument, NULL, 'b' },	    /**/
-	{ "csh", no_argument, NULL, 'c' },	    /**/
-	{ "c-shell", no_argument, NULL, 'c' },	    /**/
+// clang-format off
+static const struct option long_options[] = {
+	{ "help", no_argument, NULL, 'h' },
+	{ "bourne-shell", no_argument, NULL },
+	{ "sh", no_argument, NULL, 'b' },
+	{ "csh", no_argument, NULL, 'c' },
+	{ "c-shell", no_argument, NULL, 'c' },
 	{ NULL, no_argument, NULL, 0 }
 };
+// clang-format on
 
 static const char *long_types[38] = { "NORMAL", "NORM", "FILE", "RESET", "DIR",
 	"LNK", "LINK", "SYMLINK", "ORPHAN", "MISSING", "FIFO", "PIPE", "SOCK",
