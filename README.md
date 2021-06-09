@@ -1,3 +1,5 @@
+# Moved to https://git.cameronkatri.com/CRKatri/opendircolors
+
 # opendircolors
 A BSD-licensed replacement for GNU dircolors(1)
 
